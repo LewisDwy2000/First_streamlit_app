@@ -23,6 +23,14 @@ fruits_to_show = my_fruit_list.loc[my_fruit_list['Fruit'].isin(fruits_selected)]
 # Display data 
 streamlit.dataframe(fruits_to_show)
 
+# Create function
+def get_fruityvice_data(this_fruit_choice):
+  #Fruitvice API response
+  fruityvice_response = requests.get('https://fruityvice.com/api/fruit/' + fruit_choice).json()
+  fruityvice_normalized = pandas.json_normalize(fruityvice_response)
+  return fruityvice_normalized
+
+
 streamlit.header('Fruityvice Fruit Advice!')
 try:
   #Text entry box
@@ -30,11 +38,8 @@ try:
   if not fruit_choice:
     streamlit.error("Please select a fruit to get information.")
   else:
-      #Fruitvice API response
-      fruityvice_response = requests.get('https://fruityvice.com/api/fruit/' + fruit_choice).json()
-      fruityvice_normalized = pandas.json_normalize(fruityvice_response)
-      # Display as a table
-      streamlit.dataframe(fruityvice_normalized)
+      back_from_function = get_fruityvice_data(fruit_choice)
+      streamlit.dataframe(back_from_function)
       
 except URLError as e:
   streamlit.error()
